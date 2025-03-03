@@ -83,7 +83,7 @@ type message = {
 const globalMessages: message[] = []
 
 async function loadMessages() {
-  const response = await fetch("http://localhost:3000/get-all-messages", {
+  const response = await fetch("https://proximity-twitter-server.onrender.com/get-all-messages", {
     method: "GET"
   })
 
@@ -154,17 +154,24 @@ function getUserLocation(): Promise<number[]> {
   })
 }
 
-const userLocation = await getUserLocation()
-
-
-await loadMessages()
-let messagesUI = renderMessages()
+let userLocation: number[]
+let messagesUI: JSX.Element
 
 export async function displayNewMessage() {
   await loadMessages()
   messagesUI = renderMessages()
   messagePostedObject.call()
 }
+
+async function start() {
+  userLocation = await getUserLocation()
+
+  await loadMessages()
+  messagesUI = renderMessages()
+  messagePostedObject.call()
+}
+
+start()
 
 function App() {
   navigator.geolocation.getCurrentPosition(() => {}) //prompt to get location when website is opened
@@ -210,7 +217,7 @@ function App() {
     <div id = "wrapper">
       <MapContainer center={[40.505, -100.09]} zoom={5}>
         <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-        <Circle center={userLocation as LatLngExpression} radius={MESSAGE_DISPLAY_DISTANCE * 1609.34}></Circle>
+        <Circle center={userLocation as LatLngExpression || [0, 0] as LatLngExpression} radius={MESSAGE_DISPLAY_DISTANCE * 1609.34}></Circle>
         {messagesUI}
       </MapContainer>
       {renderSignIn()}

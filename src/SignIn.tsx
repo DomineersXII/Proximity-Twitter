@@ -11,7 +11,7 @@ async function signIn(username: string, password: string) {
     if (username.length === 0) return
     if (password.length === 0) return
 
-    const response = await fetch("http://localhost:3000/sign-in", {
+    const response = await fetch("https://proximity-twitter-server.onrender.com/sign-in", {
         method: "POST",
         body: JSON.stringify({username: username, password: password})
     })
